@@ -10,24 +10,20 @@ def get_system_color_scheme():
         output = subprocess.check_output(['sysctl', '-n', 'hw.cfb.mode'])
         if (output=='3'or'2'):
             scheme='Dark'
-    pass
+    
     elif os_name == 'Darwin':
         output = subprocess.check_output(['defaults', 'read', 'NSGlobalDomain', 'AppleAquaGraphite'])
         if(output=='1'):
             scheme='Dark'
-    pass
+    
     elif os_name == 'Linux':
         output = subprocess.check_output(['gsettings', 'get', 'org.gnome.desktop.interface', 'gtk-theme'])
         if ('dark'in output):
             scheme='Dark'
-    pass
-
-
-
 light_theme, dark_theme = kitty.conf.get('light_and_dark_mode_themes', '').split(',')
 mutex = ipc.Mutex('kitty_theme_mutex')
 
-def on_system_color_scheme_change():
+def on_system_color_scheme_change(scheme):
     get_system_color_scheme()
     if scheme == 'Dark':
         theme = dark_theme
@@ -41,5 +37,4 @@ def on_system_color_scheme_change():
             output = kitten('themes', '--dump-theme', '--cache-age=0', theme)
             colors = json.loads(output)
     Boss.patch_colors(colors)
-
 Boss.on_system_color_scheme_change = on_system_color_scheme_change
