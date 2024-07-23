@@ -27,7 +27,7 @@ def get_system_color_scheme():
 light_theme, dark_theme = kitty.conf.get('light_and_dark_mode_themes', '').split(',')
 mutex = ipc.Mutex('kitty_theme_mutex')
 
-def on_system_color_scheme_change(scheme):
+def on_system_color_scheme_change():
     get_system_color_scheme()
     if scheme == 'Dark':
         theme = dark_theme
