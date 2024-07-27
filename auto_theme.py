@@ -1,8 +1,8 @@
 import os
 import json
-import ipc
 import platform
 import subprocess
+
 
 def get_system_color_scheme():
     os_name = platform.system()
