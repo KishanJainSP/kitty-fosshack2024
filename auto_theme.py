@@ -135,41 +135,30 @@ def main():
 
     light_theme_file = os.path.expanduser('~/.config/kitty/light_theme.conf')
     dark_theme_file = os.path.expanduser('~/.config/kitty/dark_theme.conf')
-
-
-
-
-
-    thread1 = threading.Thread(target=apply_theme, args=(light_theme_file,))
-    thread2 = threading.Thread(target=apply_theme, args=(dark_theme_file,))
-
-    thread1.start()
-    thread2.start()
-
-    thread1.join()
-    thread2.join()
-
-if __name__ == "__main__":
-
-
-
-    main()
-
-
-def on_system_color_scheme_change(scheme):
-    get_system_color_scheme()
-    if scheme == 'Dark':
-        theme = dark_theme
-    elif scheme == 'Light':
-        theme = light_theme
-    else:
-        pass
-    with mutex:
+    def on_system_color_scheme_change(scheme):
+        get_system_color_scheme()
+        if scheme == 'Dark':
+            theme=dark_theme
+            thread1 = threading.Thread(target=apply_theme, args=(light_theme_file,))
+            thread1.start()
+            thread1.join()
+    
+        elif scheme == 'Light':
+            theme=light_theme    
+            thread2 = threading.Thread(target=apply_theme, args=(dark_theme_file,))
+            thread2.start()
+            thread2.join()
         try:
             output = kitty.kitten('themes', '--dump-theme', '--check-age=-1', theme)
             colors = json.loads(output)
         except Exception:
             output = kitty.kitten('themes', '--dump-theme', '--cache-age=0', theme)
             colors = json.loads(output)
-    kitty.boss.patch_colors(colors)
-kitty.boss.on_system_color_scheme_change = on_system_color_scheme_change()
+        kitty.boss.patch_colors(colors)
+    kitty.boss.on_system_color_scheme_change = on_system_color_scheme_change()
+if __name__ == "__main__":
+
+
+
+    main()
+
